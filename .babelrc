@@ -8,6 +8,7 @@
           "modules": false
         }
       ]
-    ]
+    ],
+    "sourceMaps": true,
   }
   

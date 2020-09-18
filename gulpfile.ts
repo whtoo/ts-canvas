@@ -51,6 +51,7 @@ const log = {
 const paths = {
   root: path.join(__dirname, '/'),
   lib: path.join(__dirname, '/lib'),
+  dist:path.join(__dirname,'/dist')
 }
 
 
@@ -59,6 +60,7 @@ const clearLibFile: TaskFunc = async (cb) => {
   fse.removeSync(paths.lib)
   log.progress('Deleted lib file')
   cb()
+  fse.copySync(paths.dist,paths.lib);
 }
 
 // rollup 打包
