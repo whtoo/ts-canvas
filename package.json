@@ -9,7 +9,8 @@
     "build": "gulp build",
     "api": "api-extractor run",
     "test": "jest --coverage --verbose -u",
-    "changelog": "gulp changelog"
+    "changelog": "gulp changelog",
+    "build:dev": "npm run build && lite-server --baseDir=\"lib\""
   },
   "sideEffects": "false",
   "author": "",
@@ -30,6 +31,7 @@
     "fs-extra": "^9.0.1",
     "gulp": "^4.0.2",
     "jest": "^26.4.2",
+    "lite-server": "^2.5.4",
     "rollup": "^2.27.1",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
