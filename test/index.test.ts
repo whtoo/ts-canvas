@@ -1,7 +1,7 @@
 // index.test.ts
 
 import assert from 'assert'
-import myFirstFunc from '../src'
+import myFirstFunc from '../src/lib'
 
 describe('validate:', () => {
   /**
