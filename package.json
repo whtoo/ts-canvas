@@ -8,8 +8,10 @@
   "scripts": {
     "build": "gulp build",
     "api": "api-extractor run",
-    "test": "jest --coverage --verbose -u"
+    "test": "jest --coverage --verbose -u",
+    "changelog": "gulp changelog"
   },
+  "sideEffects": "false",
   "author": "",
   "license": "ISC",
   "devDependencies": {

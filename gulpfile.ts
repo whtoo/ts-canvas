@@ -126,5 +126,6 @@ const complete: TaskFunc = (cb) => {
 // 1. 删除 lib 文件夹
 // 2. rollup 打包
 // 3. api-extractor 生成统一的声明文件, 删除多余的声明文件
-// 4. 完成
-export const build = series(clearLibFile, buildByRollup, apiExtractorGenerate,changelog, complete)
+// 4. 进行git diff生成change log。
+// 5. 完成
+export const build = series(clearLibFile, buildByRollup, apiExtractorGenerate, complete)

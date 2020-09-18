@@ -4,11 +4,6 @@
 
 ```ts
 
-// @beta
-function myFirstFunc(str: string): string;
-
-export default myFirstFunc;
-
 
 // (No @packageDocumentation comment for this package)
 
