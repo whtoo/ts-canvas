@@ -8,6 +8,14 @@
  * ```
  * 
  */
-export default function myFirstFunc (str: string) {
+function myFirstFunc (str: string) {
     return `hello ${str}`
+}
+
+function writeBytes(str: string) {
+    console.log(str);
+}
+module.exports = {
+    myFirstFunc,
+    writeBytes
 }
