@@ -1,8 +1,12 @@
-import { series } from 'gulp'
+import * as gulp from 'gulp'
 import path from 'path'
 import fse from 'fs-extra'
 import chalk from 'chalk'
 import { rollup } from 'rollup'
+import { create } from 'browser-sync'
+const browserSync = create('watch-ts');
+const reload = browserSync.reload;
+
 import {
   Extractor,
   ExtractorConfig,
@@ -59,8 +63,9 @@ const paths = {
 const clearLibFile: TaskFunc = async (cb) => {
   fse.removeSync(paths.lib)
   log.progress('Deleted lib file')
-  cb()
   fse.copySync(paths.dist,paths.lib);
+  reload({stream:true})
+  cb()
 }
 
 // rollup 打包
@@ -78,8 +83,9 @@ const buildByRollup: TaskFunc = async (cb) => {
     outOptions.forEach(async (outOption) => {
       await bundle.write(outOption)
     })
-    cb()
+    reload({stream:true})
     log.progress('Rollup built successfully')
+    cb()
   }
 }
 
@@ -119,6 +125,17 @@ const apiExtractorGenerate: TaskFunc = async (cb) => {
   }
 }
 
+const browerServer = (cb) => {
+  browserSync.init({
+    server: {
+      baseDir: "./lib/"
+    }
+  }),
+  gulp.watch('./src/**/*.ts',gulp.series(buildByRollup)).on('change',reload)
+  gulp.watch('./dist/*.html',gulp.series(clearLibFile)).on('change',reload)
+  cb()
+}
+
 const complete: TaskFunc = (cb) => {
   log.progress('---- end ----')
   cb()
@@ -130,4 +147,4 @@ const complete: TaskFunc = (cb) => {
 // 3. api-extractor 生成统一的声明文件, 删除多余的声明文件
 // 4. 进行git diff生成change log。
 // 5. 完成
-export const build = series(clearLibFile, buildByRollup, apiExtractorGenerate, complete)
+export const build = gulp.series(clearLibFile, buildByRollup, browerServer)

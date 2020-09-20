@@ -6,6 +6,9 @@ import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
 import { eslint } from 'rollup-plugin-eslint'
 import { DEFAULT_EXTENSIONS } from '@babel/core'
+import serve from 'rollup-plugin-serve';
+
+import livereload from 'rollup-plugin-livereload';
 
 import pkg from './package.json'
 
