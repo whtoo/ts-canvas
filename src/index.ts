@@ -1,3 +1,3 @@
-import myFunc from './lib'
+import { myFirstFunc } from "./lib"
 
-console.log(myFunc("whoto"))
+console.log(myFirstFunc("whoto"))

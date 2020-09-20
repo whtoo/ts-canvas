@@ -10,7 +10,8 @@
     "api": "api-extractor run",
     "test": "jest --coverage --verbose -u",
     "changelog": "gulp changelog",
-    "build:dev": "npm run build && lite-server --baseDir=\"lib\""
+    "build:dev": "npm run build && lite-server --baseDir=\"lib\"",
+    "server": "lite-server --baseDir=\"lib\""
   },
   "sideEffects": "false",
   "author": "",
@@ -41,5 +42,8 @@
     "ts-jest": "^26.3.0",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.2"
+  },
+  "dependencies": {
+    "systemjs": "^6.6.1"
   }
 }

@@ -1,15 +1,15 @@
 {
     "compilerOptions": {
       /* 基础配置 */
-      "target": "esnext",
+      "target": "ESNext",
       "lib": [
         "dom",
-        "esnext"
+        "ESNext"
       ],
       "removeComments": false,
       "declaration": true,
       "sourceMap": true,
-  
+      "allowSyntheticDefaultImports": true,
       /* 强类型检查配置 */
       "strict": true,
       "noImplicitAny": false,

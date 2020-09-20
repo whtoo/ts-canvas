@@ -15,7 +15,8 @@ function myFirstFunc (str: string) {
 function writeBytes(str: string) {
     console.log(str);
 }
-module.exports = {
+
+export {
     myFirstFunc,
     writeBytes
 }
