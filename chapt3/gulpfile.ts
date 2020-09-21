@@ -64,7 +64,6 @@ const clearLibFile: TaskFunc = async (cb) => {
   fse.removeSync(paths.lib)
   log.progress('Deleted lib file')
   fse.copySync(paths.dist,paths.lib);
-  reload({stream:true})
   cb()
 }
 
@@ -83,7 +82,6 @@ const buildByRollup: TaskFunc = async (cb) => {
     outOptions.forEach(async (outOption) => {
       await bundle.write(outOption)
     })
-    reload({stream:true})
     log.progress('Rollup built successfully')
     cb()
   }
