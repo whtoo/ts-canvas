@@ -42,7 +42,6 @@ const rollupConfig : RollupOptions = {
     // 验证导入的文件
     eslint({
       throwOnError: true, // lint 结果有错误将会抛出异常
-      throwOnWarning: true,
       include: ['src/**/*.ts'],
       exclude: ['node_modules/**', 'lib/**', '*.js'],
     }),

@@ -131,7 +131,7 @@ const browerServer = (cb) => {
       baseDir: "./lib/"
     }
   }),
-  gulp.watch('./dist/*.html',gulp.series(copyStaticFile)).on('change',reload)
+  gulp.watch('./dist/*.*',gulp.series(copyStaticFile)).on('change',reload)
   gulp.watch('./src/**/*.ts',gulp.series(buildByRollup)).on('change',reload)
   cb()
 }
