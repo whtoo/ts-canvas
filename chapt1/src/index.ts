@@ -1,4 +1,5 @@
-import $ from 'jquery'
+import $ from 'jquery';
+
 /**
  * 
  * @param {HTMLCanvasElement | null} ctx

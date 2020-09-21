@@ -11,6 +11,7 @@ import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 
 import pkg from './package.json'
+console.log("current dir is : ",__dirname);
 
 const paths = {
   input: path.join(__dirname, '/src/index.ts'),
@@ -42,9 +43,9 @@ const rollupConfig : RollupOptions = {
     // 验证导入的文件
     eslint({
       throwOnError: true, // lint 结果有错误将会抛出异常
-      throwOnWarning: true,
       include: ['src/**/*.ts'],
       exclude: ['node_modules/**', 'lib/**', '*.js'],
+      
     }),
 
     // 使得 rollup 支持 commonjs 规范，识别 commonjs 规范的依赖

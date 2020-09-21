@@ -1,4 +1,5 @@
 const eslintrc = {
+    root:true,
     parser: '@typescript-eslint/parser', // 使用 ts 解析器
     extends: [
         'eslint:recommended', // eslint 推荐规则
@@ -15,7 +16,6 @@ const eslintrc = {
         es6: true,
     },
     parserOptions: {
-        project: './tsconfig.eslint.json',
         ecmaVersion: 2019,
         sourceType: 'module',
         ecmaFeatures: {

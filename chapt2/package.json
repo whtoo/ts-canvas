@@ -1,6 +1,5 @@
 {
-  "name": "ts-canvas",
-  "version": "1.0.0",
+  "name": "chapt2",
   "description": "",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
@@ -23,6 +22,7 @@
     "@types/gulp": "^4.0.6",
     "@types/jest": "^26.0.14",
     "@types/jquery": "^3.5.1",
+    "@types/mocha": "^8.0.3",
     "@types/node": "^14.11.1",
     "@typescript-eslint/eslint-plugin": "^4.1.1",
     "@typescript-eslint/parser": "^4.1.1",
