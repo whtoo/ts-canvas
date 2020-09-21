@@ -1,5 +1,4 @@
-import { IEnumerator } from "./IEnumerator";
-
+import { IEnumerator } from './IEnumerator'
 export enum ETokenType {
     NONE,
     STRING,
@@ -8,259 +7,257 @@ export enum ETokenType {
 
 export interface IDoom3Token {
 
-    reset (): void;
+    reset() : void;
 
-    isString ( str: string ): boolean;
+    isString(str:string) : boolean;
 
-    readonly type: ETokenType;
-    
-    getString (): string;
-    getFloat (): number;
-    getInt (): number;
+    readonly type : ETokenType;
+
+    getString() : string;
+
+    getFloat() : number;
+
+    getInt() : number;
 }
 
-export interface IDoom3Tokenizer extends IEnumerator < IDoom3Token > {
-    setSource ( source : string ) : void ;
-    /*
-    createIDoom3Token ( ) : IDoom3Token;
-    reset ( ) : void ;
-    getNextToken ( token : IDoom3Token) : boolean ;  
-    */
+export interface IDoom3Tokenizer extends IEnumerator<IDoom3Token> {
+    setSource (source : string) : void;
 }
+
 
 export class Doom3Factory
 {
-    public static createDoom3Tokenizer () :IDoom3Tokenizer {
-        return new Doom3Tokenizer ( ) ;
+    public static createDoom3Tokenizer():IDoom3Tokenizer {
+        return new Doom3Tokenizer();
     }
 }
 
 class Doom3Token implements IDoom3Token {
     
-    private _charArr: string[] = [];
+    private _charArr : string[] = [];
 
-    private _val ! : number;
-    private _type ! : ETokenType;
-   
-    public constructor () {
-        // this . _charArr . length = 0 ;
-        // this . _type = ETokenType . NONE ;
-        // this . _val = 0.0 ;
-        this . reset ( ) ;
+    private _val! : number;
+    private _type! : ETokenType;
+
+    public constructor()  {
+        this.reset();
     }
 
-    public reset () : void {
-        this . _charArr . length = 0 ;
-        this . _type = ETokenType . NONE ;
-        this . _val = 0.0 ;
+    public reset() : void {
+        this._charArr.length = 0;
+        this._type = ETokenType.NONE;
+        this._val = 0.0;
     }
 
-    public get type (): ETokenType {
+    public get type() : ETokenType {
         return this._type;
     }
 
-    public getString (): string {
-        return this._charArr.join( "" );
+    public getString() : string {
+        return this._charArr.join("");
     }
 
-    public getFloat (): number {
+    public getFloat() : number {
         return this._val;
     }
 
-    public getInt (): number {
-        return parseInt( this._val.toString(), 10 );
+    public getInt() : number {
+        return parseInt(this._val.toString(),10);
     }
 
-    public isString ( str : string ) : boolean {
-        const count : number = this . _charArr . length ;
-        if ( str . length !== count ) {
-            return false ;
+    public isString(str: string) : boolean {
+        const count = this._charArr.length;
+        if(str.length !== count){
+            return false
         }
-        for ( let i  = 0 ; i < count ; i++ ) {
-            if ( this . _charArr [ i ] !== str [ i ] ) {
-                return false ;
-            }
+        for(let i = 0;i < count;i++){
+            if(this._charArr[i] !== str[i]) return false
         }
 
-        return true ;
+        return true
     }
 
-    public addChar ( c : string ) : void {
-        this . _charArr . push ( c ) ;
+    public addChar(c : string) : void {
+        this._charArr.push(c)
     }
 
-    public setVal ( num : number ) : void {
-        this . _val = num ;
-        this . _type = ETokenType . NUMBER ;
+    public setVal(num : number) : void {
+        this._val = num;
+        this._type = ETokenType.NUMBER;
     }
 
-    public setType ( type : ETokenType ) : void {
-        this . _type = type ;
+    public setType(type:ETokenType) : void {
+        this._type = type;
     }
 }
 
 class Doom3Tokenizer implements IDoom3Tokenizer {
-    private _whiteSpaces : string [ ] = [ " " , "\t" , "\v" , "\n" , "\r" ] ;
-    
-    private _digits : string [ ] = [ "0" , "1" , "2" , "3" , "4" , "5" , "6" , "7" , "8" , "9" ] ;
-    
-    private _isDigit ( c : string ) : boolean {
-        for ( let i  = 0 ; i < this . _digits . length ; i++ ) {
-            if ( c === this. _digits [ i ] ) {
-                return true ;
-            }
-        }
-        return false ;
-    }
+   private _whiteSpaces : string[] = [ " " , "\t" , "\v" , "\n" , "\r" ];
+   
+   private _digits : string[] = ["0","1","2","3","3","4","5","6","7","8","9"];
 
-    private _isWhitespace ( c : string ) : boolean {
-        for ( let i  = 0 ; i < this . _whiteSpaces . length ; i++ ) {
-            if ( c === this . _whiteSpaces [ i ] ) {
-                return true ;
-            }
-        }
+   private _isDigit(c:string) : boolean {
+       for(let i = 0;i <this._digits.length;i++){
+           if(c === this._digits[i]) {
+               return true;
+           }
+       }
+       return false;
+   }
 
-        return false;
-    }
+   private _isWhitespace(c:string) : boolean {
+       /**
+        * 永远不要把属性和方法名字取得非常相似，尤其是js或者ts这种语言！！！
+        */
+       for (let index = 0; index < this._whiteSpaces.length; index++) {
+           if(c === this._whiteSpaces[index]) {
+               return true;
+           }
+       }
+       return false;
+   }
 
-    private _source  = "Doom3Tokenizer" ;
-    private _currIdx  = 0 ;
-
-    /*
+   private _source  = "Doom3Tokenizer";
+   private _curIdx  = 0;
+  /*
     public createIDoom3Token ( ) : IDoom3Token {
         return new Doom3Token ( ) ;
     }
     */
 
-    public setSource ( source : string ) : void {
-        this . _source = source ;
-        this . _currIdx = 0 ;
-    }
+   public setSource(source : string ) : void{
+       this._source = source;
+       this._curIdx = 0;
+   }
 
-    public reset ( ) : void {
-        this . _currIdx = 0 ;
-    }
+   public reset() : void {
+       this._curIdx = 0;
+   }
 
-    private _current : IDoom3Token = new Doom3Token ( ) ;
+   private _curent : IDoom3Token = new Doom3Token();
 
-    public moveNext() : boolean {
-        return this.getNextToken ( this . _current );  
-    }
+   public moveNext() : boolean {
+       return this.getNextToken(this._curent);
+   }
 
-    public get current () : IDoom3Token {
-        return this._current;
-    }
+   public get current() : IDoom3Token {
+       return this._curent;
+   }
 
-     private _skipWhitespace ( ) : string {
-        let c  = "" ;
-        do {
-            c = this . _getChar ( ) ;
-        } while ( c . length > 0 && this . _isWhitespace( c ) ) ;
+   private _skipWhitespace() : string {
+       let c = "";
+       do {
+           c = this._getChar();
+       } while(c.length > 0 && this._isWhitespace(c));
 
-        return c ;
-    }
+       return c;
+   }
 
-    private getNextToken ( tok : IDoom3Token ) : boolean {
-        const token : Doom3Token = tok as Doom3Token ;
-        let c  = "" ;
-        token . reset ( ) ;
-        do {
-            c = this . _skipWhitespace ( );
-            if ( c == '/' && this . _peekChar ( ) == '/' ) {
-                c = this . _skipComments0 ( ) ;
-            } else if ( c == '/' && this . _peekChar ( ) == '*' ) {
-                c = this . _skipComments1 ( ) ;
-            } else if ( this . _isDigit( c ) || c == '-' || ( c == '.' && this . _isDigit( this . _peekChar ( ) ) ) ) {
-                this . _ungetChar ( ) ;
-                this . _getNumber ( token ) ;
-                return true ;
-            } else if ( c == '"' || c == '\'' ) {
-                this . _getSubstring ( token , c ) ;
-                return true ;
-            } else if ( c.length > 0 ) {
-                this . _ungetChar ();
-                this . _getString ( token ) ;
-                return true ;
-            }
-        } while ( c.length > 0 ) ; 
-        return false ;
-    }
+   private getNextToken(tok: IDoom3Token) : boolean {
+       const token = tok as Doom3Token;
+       let c = "";
+       token.reset();
+       do {
+           c = this._skipWhitespace();
+           if(c == '/' && this._peekChar() == '/') {
+               c = this._skipComments0();
+           } else if(c == '/' && this._peekChar() == '*'){
+               c = this._skipComments1();
+           } else if(this._isDigit(c) || c == '-' || (c == '.' && this._isDigit(this._peekChar()))){
+               this._ungetChar();
+               this._getNumber(token);
+               return true;
+           } else if(c == '"' || c == '\'') {
+               this._getSubstring(token,c)
+               return true
+           } else if(c.length > 0){
+               this._ungetChar();
+               this._getString(token);
+               return true
+           }
+       } while(c.length > 0)
+       return false;
+   }
 
-    private _getChar ( ) : string {
-        if ( this._currIdx >= 0 && this . _currIdx < this . _source . length ) {
-            return this . _source . charAt ( this . _currIdx ++ ) ;
-        }
-        return "" ;
-    }
+   private _getChar() : string {
+       if(this._curIdx >= 0 && this._curIdx < this._source.length) {
+           return this._source.charAt(this._curIdx++);
+       }
 
-    private _peekChar ( ): string {
-        if ( this . _currIdx >= 0 && this . _currIdx < this . _source.length ) {
-            return this._source.charAt( this . _currIdx );
-        }
-        return "";
-    }
+       return ""
+   }
 
-    private _ungetChar ( ) : void {
-        if ( this . _currIdx > 0 ) {
-            -- this . _currIdx ;
-        }      
-    }
+   private _peekChar() : string {
+       if(this._curIdx >= 0 && this._curIdx < this._source.length){
+           return this._source.charAt(this._curIdx);
+       }
 
-    private _skipComments0 ( ) : string {
-        let c  = "" ;
-        do {
-            c = this . _getChar ( ) ;
-        } while ( c.length > 0 && c != '\n' ) ;
-        return c ;
-    }
+       return "";
+   }
 
-    private _skipComments1 ( ) : string {
-        let c  = "" ;
+   private _ungetChar() : void {
+       if(this._curIdx > 0){
+           --this._curIdx;
+       }
+   }
+
+   private _skipComments0 ( ) : string {
+    let c = "" ;
+    do {
         c = this . _getChar ( ) ;
-        do {
-            c = this . _getChar ( ) ;
-        } while ( c . length > 0 && ( c != '*' || this . _peekChar ( ) != '/' ) ) ;
-        c = this . _getChar ( ) ;
-        return c ;
+    } while ( c.length > 0 && c != '\n' ) ;
+    return c ;
+}
+
+   private _skipComments1() : string {
+       let c = "";
+       c = this._getChar();
+       do {
+           c = this._getChar();
+       } while(c.length > 0 && (c != '*' || this._peekChar() != '/'))
+       c = this._getChar();
+       return c;
     }
 
-    private _getNumber ( token: Doom3Token ) : void {
+    private _getNumber(token: Doom3Token) : void{
+        let val = 0.0;
+        let isFloat = false;
+        let scaleValue = 0.1;
+        let c = this._getChar();
+        const isNegate = (c === '-');
 
-        let val  = 0.0 ;
-        let isFloat  = false ;
-        let scaleValue  = 0.1 ;
-        let c : string = this . _getChar ( ) ;
-        const isNegate : boolean = ( c === '-' ) ; 
+        let consumed = false
 
-        let consumed  = false ;
-        const ascii0 = "0" . charCodeAt ( 0 ) ;
+        const ascii0 = 0x30;
+
         do {
-            token . addChar ( c ) ;
-            if ( c == '.' ) {
-                isFloat = true ;
-            } else if ( c !== '-' ) {
-                const ascii : number = c . charCodeAt ( 0 ) ;
-                const vc : number = ( ascii - ascii0 ) ;
-                if ( ! isFloat )
-                    val = 10 * val + vc ;
-                else {
-                    val = val + scaleValue * vc ;
-                    scaleValue *= 0.1 ;
+            token.addChar(c);
+            if(c === '.') {
+                isFloat = true
+            } else if(c !== '-' ){
+                const ascii = c.charCodeAt(0)
+                const vc = (ascii - ascii0)
+                if(!isFloat){
+                    val = 10 * val + vc;
+                } else {
+                    val = val + scaleValue * vc;
+                    scaleValue *= 0.1;
                 }
-            } 
-            if ( consumed === true )
-                this . _getChar ( ) ;
-
-            c = this . _peekChar() ;
-            consumed = true ;
+            }
+            if(consumed === true)
+                this._getChar()
+            
+            c = this._peekChar();
+            consumed = true;
         } while (c . length > 0 && ( this . _isDigit ( c ) || ( ! isFloat && c === '.' ) ) ) ;
-        if ( isNegate ){
-            val = - val ;
+
+        if(isNegate){
+            val = -val;
         }
-        token.setVal ( val ) ;
+        token.setVal(val);
     }
 
-    private _isSpecialChar ( c : string ) : boolean {
+    private _isSpecialChar(c : string) : boolean {
         switch ( c ) {
             case '(' :
                 return true ;
@@ -283,30 +280,27 @@ class Doom3Tokenizer implements IDoom3Tokenizer {
         return false ;
     }
 
-    private _getString ( token: Doom3Token ): void {
-        let c : string = this . _getChar ( ) ;
-        token . setType ( ETokenType . STRING ) ;
+    private _getString(token: Doom3Token) : void {
+        let c = this._getChar();
+        token.setType(ETokenType.STRING);
         do {
-            token . addChar ( c ) ;
-            
-            if ( ! this . _isSpecialChar ( c ) ) {
-                c = this . _getChar ( ) ;
+            token.addChar(c);
+            if(!this._isSpecialChar(c)){
+                c = this._getChar();
             }
         } while ( c . length > 0 && ! this._isWhitespace ( c ) && ! this._isSpecialChar ( c ) ) ;
     }
 
-
-    private _getSubstring ( token : Doom3Token, endChar: string ) : void {
-        let end  = false ;
-        let c  = "";
-        token . setType( ETokenType.STRING ) ;
+    private _getSubstring(token:Doom3Token, endChar: string) : void {
+        let end = false;
+        let c = "";
+        token.setType(ETokenType.STRING);
         do {
-            c = this . _getChar() ;
-            if ( c === endChar ) {
-                end = true ;
-            }
-            else {
-                token . addChar( c ) ;
+            c = this._getChar()
+            if(c === endChar){
+                end = true
+            } else{
+                token.addChar(c)
             }
         } while ( c . length > 0 && c !== '\n' && ! end ) ;
     }
