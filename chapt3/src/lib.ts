@@ -9,7 +9,7 @@
  * 
  */
 function myFirstFunc (str: string) {
-    return `hello ${str}`
+    return `hello Mr. ${str}`
 }
 
 function writeBytes(str: string) {

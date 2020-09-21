@@ -58,12 +58,14 @@ const paths = {
   dist:path.join(__dirname,'/dist')
 }
 
-
+const copyStaticFile: TaskFunc = async (cb) => {
+  fse.copySync(paths.dist,paths.lib);
+  cb()
+}
 // 删除 lib 文件
 const clearLibFile: TaskFunc = async (cb) => {
   fse.removeSync(paths.lib)
   log.progress('Deleted lib file')
-  fse.copySync(paths.dist,paths.lib);
   cb()
 }
 
@@ -129,8 +131,8 @@ const browerServer = (cb) => {
       baseDir: "./lib/"
     }
   }),
+  gulp.watch('./dist/*.html',gulp.series(copyStaticFile)).on('change',reload)
   gulp.watch('./src/**/*.ts',gulp.series(buildByRollup)).on('change',reload)
-  gulp.watch('./dist/*.html',gulp.series(clearLibFile)).on('change',reload)
   cb()
 }
 
@@ -145,4 +147,4 @@ const complete: TaskFunc = (cb) => {
 // 3. api-extractor 生成统一的声明文件, 删除多余的声明文件
 // 4. 进行git diff生成change log。
 // 5. 完成
-export const build = gulp.series(clearLibFile, buildByRollup, browerServer)
+export const build = gulp.series(clearLibFile,copyStaticFile, buildByRollup, browerServer)
