@@ -1,0 +1,10 @@
+@startuml
+scale 768 width
+Browser->>Server: 1. POST /rest/rpc/login with email and password
+Server->>Server: 2.Creates a JWT \nwith a secret
+Server->>Browser: 3. Returns the JWT(token) to the Browser 
+Browser->>Server: 4. Sends the JWT(token) on the Authorization Header
+Server->>Server: 5.Check JWT signatura. \nGet user information \nfrom the JWT
+Server->>Browser: 6. Sends reponse to the client
+
+@enduml
