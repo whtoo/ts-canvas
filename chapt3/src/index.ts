@@ -3,6 +3,7 @@ import { CanvasKeyBoardEvent, CanvasMouseEvent } from "./application";
 class ApplicationTest extends Application {
     protected dispatchKeyDown ( evt : CanvasKeyBoardEvent) : void {
        console . log ( " key : " + evt.key + " is down " ) ;
+    
     }
 
     protected dispatchMouseDown ( evt : CanvasMouseEvent ) : void {
@@ -25,13 +26,13 @@ const app : Application = new ApplicationTest ( canvas ) ;
 app . update ( 0 , 0 ) ;
 app . render ( ) ;
 
-const startButton : HTMLButtonElement | null = document . getElementById ( 'start' ) as HTMLButtonElement ;
-const stopButton : HTMLButtonElement | null = document . getElementById ( 'stop' ) as HTMLButtonElement ;
+const startButton  = document . getElementById ( 'start' ) as HTMLButtonElement ;
+const stopButton = document . getElementById ( 'stop' ) as HTMLButtonElement ;
 
-startButton . onclick = ( ev : MouseEvent ) : void => {
+startButton.onclick = ( ev : MouseEvent ) : void => {
     app . start ( ) ;
 }
 
-stopButton . onclick = ( ev : MouseEvent ) : void => {
+stopButton.onclick = ( ev : MouseEvent ) : void => {
     app . stop ( ) ;
 }

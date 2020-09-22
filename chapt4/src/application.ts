@@ -1,4 +1,3 @@
-import { format } from "path";
 import { vec2 } from './math2d'
 export enum EInputEventType {
     MOUSEEVENT,
