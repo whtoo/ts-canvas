@@ -202,6 +202,10 @@ export class vec3 {
         return out ;
     }
 
+    public static create ( x  = 0 , y  = 0,z = 0 ) : vec3 {
+        return new vec3( x , y ,z) ;
+    }
+
     public toString ( ) : string {
         return " [ " + this . values [ 0 ] + " , " + this . values [ 1 ] + " , " + this . values [ 2 ]  + " ] " ;
     }
@@ -258,7 +262,27 @@ export class mat2d {
         return result ;
     }
 
-    
+    // public static multiplyVec ( left : mat2d , right : vec3 , result : vec3 | null = null ) : vec3 {
+    //     if(result === null) result = new vec3();
+    //     const a0 : number = left . values [ 0 ] ;
+    //     const a1 : number = left . values [ 1 ] ;
+    //     const a2 : number = left . values [ 2 ] ;
+    //     const a3 : number = left . values [ 3 ] ;
+    //     const a4 : number = left . values [ 4 ] ;
+    //     const a5 : number = left . values [ 5 ] ;
+    //     const x : number = right.values[0];
+    //     const y : number = right.values[1];
+    //     const t : number = right.values[2];
+
+    //     result . values [ 0 ] = a0 * b0 + a2 * b1 ;
+    //     result . values [ 1 ] = a1 * b0 + a3 * b1 ;
+    //     result . values [ 2 ] = a0 * b2 + a2 * b3 ;
+    //     result . values [ 3 ] = a1 * b2 + a3 * b3 ;
+    //     result . values [ 4 ] = a0 * b4 + a2 * b5 + a4 ;
+    //     result . values [ 5 ] = a1 * b4 + a3 * b5 + a5 ;
+    //     return result
+    // }
+
     public static multiply ( left : mat2d , right : mat2d , result : mat2d | null = null ) : mat2d {
         if ( result === null ) result = new mat2d() ;
 

@@ -1,6 +1,6 @@
 
 import { Canvas2DApplication,Application,TimerCallback,CanvasKeyBoardEvent, CanvasMouseEvent } from "./application";
-import { Math2D,mat2d,MatrixStack,Size,vec2,Rectangle,Inset } from "./math2d";
+import { Math2D,mat2d,vec3,MatrixStack,Size,vec2,Rectangle,Inset } from "./math2d";
 import { EImageFillType,ELayout } from './drawtypes'
 import $ from 'jquery';
 
@@ -132,12 +132,9 @@ class TestApplication extends Canvas2DApplication {
         if ( this.context2D !== null ) {
             let centX: number
             this.context2D.clearRect( 0, 0, this.canvas.width, this.canvas.height );
-            this.strokeGrid();
-            // 自行切换下面函数
-           
         }
     }
-
+    
     public clear() : void {
         this.context2D?.clearRect( 0, 0, this.canvas.width, this.canvas.height );
     }
@@ -487,17 +484,7 @@ class TestApplication extends Canvas2DApplication {
             this.strokeCoord( 0, 0, this.canvas.width, this.canvas.height );
         }
     }
-
-    /*******************************************4.2节代码************************************************ */
-    public printTextStates (): void {
-        if ( this.context2D !== null ) {
-            console.log( " *********TextState********** " );
-            console.log( " font : " + this.context2D.font );
-            console.log( " textAlign : " + this.context2D.textAlign );
-            console.log( " textBaseline : " + this.context2D.textBaseline );
-        }
-    }
-
+    
     public fillText ( text: string, x: number, y: number, color = 'white', align: TextAlign = 'left', baseline: TextBaseline = 'top', font: FontType = '10px sans-serif' ): void {
         if ( this.context2D !== null ) {
             this.context2D.save();
@@ -510,59 +497,7 @@ class TestApplication extends Canvas2DApplication {
         }
     }
 
-    public testCanvas2DTextLayout (): void {
-        const x = 20;
-        const y = 20;
-        const width: number = this.canvas.width - x * 2;
-        const height: number = this.canvas.height - y * 2;
-        let drawX: number = x;
-        let drawY: number = y;
-        const radius = 3;
-
-        this.fillRectWithTitle( x, y, width, height );
-        this.fillText( "left-top", drawX, drawY, 'white', 'left', 'top' /*, '20px sans-serif' */ );
-        this.fillCircle( drawX, drawY, radius, 'black' );
-
-        drawX = x + width;
-        drawY = y;
-        this.fillText( "right-top", drawX, drawY, 'white', 'right', 'top' /* , '20px sans-serif' */ );
-        this.fillCircle( drawX, drawY, radius, 'black' );
-
-        drawX = x + width;
-        drawY = y + height;
-        this.fillText( "right-bottom", drawX, drawY, 'white', 'right', 'bottom' /* , '20px sans-serif' */ );
-        this.fillCircle( drawX, drawY, radius, 'black' );
-
-        drawX = x;
-        drawY = y + height;
-        this.fillText( "left-bottom", drawX, drawY, 'white', 'left', 'bottom' /* , '20px sans-serif' */ );
-        this.fillCircle( drawX, drawY, radius, 'black' );
-
-        drawX = x + width * 0.5;
-        drawY = y + height * 0.5;
-        this.fillText( "center-middle", drawX, drawY, 'black', 'center', 'middle' /* , '20px sans-serif' */ );
-        this.fillCircle( drawX, drawY, radius, 'red' );
-
-        drawX = x + width * 0.5;
-        drawY = y;
-        this.fillText( "center-top", drawX, drawY, 'blue', 'center', 'top' /* , '20px sans-serif' */ );
-        this.fillCircle( drawX, drawY, radius, 'black' );
-
-        drawX = x + width;
-        drawY = y + height * 0.5;
-        this.fillText( "right-middle", drawX, drawY, 'blue', 'right', 'middle' /* , '20px sans-serif' */ );
-        this.fillCircle( drawX, drawY, radius, 'black' );
-
-        drawX = x + width * 0.5;
-        drawY = y + height;
-        this.fillText( "center-bottom", drawX, drawY, 'blue', 'center', 'bottom' );
-        this.fillCircle( drawX, drawY, radius, 'black' );
-
-        drawX = x;
-        drawY = y + height * 0.5;
-        this.fillText( "left-middle", drawX, drawY, 'blue', 'left', 'middle' /* , '20px sans-serif' */ );
-        this.fillCircle( drawX, drawY, radius, 'black' );
-    }
+   
 
     public calcTextSize ( text: string, char = 'W', scale = 0.5 ): Size {
         if ( this.context2D !== null ) {
@@ -650,84 +585,6 @@ class TestApplication extends Canvas2DApplication {
         }
     }
 
-    public testMyTextLayout ( font: string = this.makeFontString( "10px", "normal", "normal", "normal", 'sans-serif' ) ): void {
-        /**
-         *               ↑
-         *              20
-         *               ↓
-         *      +------------------+
-         *      |                  |
-         * ←20→ |                  |
-         *      |                  |
-         *      |                  |
-         *      |                  |
-         *      |                  |
-         *      |                  |
-         *      +------------------|
-         * 
-         * 
-         * 
-         */
-        /**
-         * Margin-left
-         */
-        const x = 20;
-        /**
-         * Margin-top
-         */
-        const y = 20;
-        /**
-         * Text layouts display rect area
-         */
-        const width: number = this.canvas.width - x * 2;
-        const height: number = this.canvas.height - y * 2;
-        /**
-         * Text layouts display rect right boundry
-         */
-        const right: number = x + width;
-              /**
-         * Text layouts display rect bottom boundry
-         */
-        const bottom: number = y + height;
-
-        let drawX: number = x;
-        let drawY: number = y;
-        const drawWidth = 150;
-        const drawHeight = 50;
-
-        if ( this.context2D !== null ) {
-
-            this.context2D.save();
-            this.context2D.font = font;
-            this.fillRectWithTitle( x, y, width, height );
-            this.fillRectWithTitle( drawX, drawY, drawWidth, drawHeight, 'left-top', ELayout.LEFT_TOP, 'rgba( 255 , 255 , 0 , 0.2 )' );
-            drawX = right - drawWidth;
-            drawY = y;
-            this.fillRectWithTitle( drawX, drawY, drawWidth, drawHeight, 'right-top', ELayout.RIGHT_TOP, 'rgba( 255 , 255 , 0 , 0.2 )' );
-            drawX = right - drawWidth;
-            drawY = bottom - drawHeight;
-            this.fillRectWithTitle( drawX, drawY, drawWidth, drawHeight, 'right-bottom', ELayout.RIGHT_BOTTOM, 'rgba( 255 , 255 , 0 , 0.2 )' );
-            drawX = x;
-            drawY = bottom - drawHeight;
-            this.fillRectWithTitle( drawX, drawY, drawWidth, drawHeight, 'left-bottom', ELayout.LEFT_BOTTOM, 'rgba( 255 , 255 , 0 , 0.2 )' );
-            drawX = ( right - drawWidth ) * 0.5;
-            drawY = ( bottom - drawHeight ) * 0.5;
-            this.fillRectWithTitle( drawX, drawY, drawWidth, drawHeight, 'center-middle', ELayout.CENTER_MIDDLE, 'rgba( 255 , 0 , 0 , 0.2 )' );
-            drawX = ( right - drawWidth ) * 0.5;
-            drawY = y;
-            this.fillRectWithTitle( drawX, drawY, drawWidth, drawHeight, 'center-top', ELayout.CENTER_TOP, 'rgba( 0 , 255 , 0 , 0.2 )' );
-            drawX = ( right - drawWidth );
-            drawY = ( bottom - drawHeight ) * 0.5;
-            this.fillRectWithTitle( drawX, drawY, drawWidth, drawHeight, 'right-middle', ELayout.RIGHT_MIDDLE, 'rgba( 0 , 255 , 0 , 0.2 )' );
-            drawX = ( right - drawWidth ) * 0.5;
-            drawY = ( bottom - drawHeight );
-            this.fillRectWithTitle( drawX, drawY, drawWidth, drawHeight, 'center-bottom', ELayout.CENTER_BOTTOM, 'rgba( 0 , 255 , 0 , 0.2 )' );
-            drawX = x;
-            drawY = ( bottom - drawHeight ) * 0.5;
-            this.fillRectWithTitle( drawX, drawY, drawWidth, drawHeight, 'left-middle', ELayout.LEFT_MIDDLE, 'rgba( 0 , 255 , 0 , 0.2 )' );
-        }
-    }
-
     public /* static */ makeFontString ( size: FontSize = '10px',
         weight: FontWeight = 'normal',
         style: FontStyle = 'normal',
@@ -743,28 +600,6 @@ class TestApplication extends Canvas2DApplication {
         const ret: string = strs.join( " " );
         console.log( ret );
         return ret;
-    }
-
-    /*******************************************4.3节代码************************************************ */
-    public loadAndDrawImage ( url: string ): void {
-        const img: HTMLImageElement = document.createElement( 'img' ) as HTMLImageElement;
-        img.src = url;
-        img.onload = ( ev: Event ): void => {
-            if ( this.context2D !== null ) {
-                
-                // 在console控制台输出载入图像的尺寸
-                console . log ( url + " 尺寸为 [ " + img . width + " , " + img . height + " ] " ) ;
-                // 将srcImage保持原样的方式绘制到Canvas画布[ 10 , 10 ]的位置
-                this . context2D . drawImage ( img , 10 , 10 ) ;
-                // 将srcImage以拉伸缩放的方式绘制到Canvas画布指定的矩形中去
-                this . context2D . drawImage ( img , img . width + 30  , 10 , 200 , img . height ) ;
-                // 将srcImage的部分区域[ 44 , 6 , 162 , 175 , 200 ]以拉伸缩放的方式绘制到Canvas画布指定的矩形[ 200 , img . height + 30 , 200 , 130 ]中去
-                this . context2D . drawImage ( img , 44 , 6 , 162 , 175 , 200 , img . height + 30 , 200 , 130  ) ;
-                
-                //this . drawImage ( img , Rectangle .create ( 20, 20 , 540 , 300 ) , Rectangle . create ( 44 , 6 , 162 , 175 ) , EImageFillType . STRETCH ) ;
-                // this . drawImage ( img , Rectangle .create ( 20, 20 , 100 , 50 ) , Rectangle . create ( 44 , 6 , 162 , 175 ) , EImageFillType . REPEAT ) ;
-            }
-        }
     }
 
     public drawImage ( img: HTMLImageElement | HTMLCanvasElement, destRect: Rectangle, srcRect: Rectangle = Rectangle.create( 0, 0, img.width, img.height ), fillType: EImageFillType = EImageFillType.STRETCH ): boolean {
@@ -868,50 +703,6 @@ class TestApplication extends Canvas2DApplication {
             Rectangle.create( 100, 100, colorCanvas.width, colorCanvas.height ) );
     }
 
-    public testChangePartCanvasImageData ( rRow = 2, rColum = 0, cRow = 1, cColum = 0, size = 32 ): void {
-        const colorCanvas: HTMLCanvasElement = this.getColorCanvas( size );
-        const context: CanvasRenderingContext2D | null = colorCanvas.getContext( "2d" );
-
-        if ( context === null ) {
-            alert( "Canvas获取渲染上下文失败！" );
-            throw new Error( "Canvas获取渲染上下文失败！" );
-        }
-        this . setShadowState ( ) ;
-        this.drawImage( colorCanvas,
-            Rectangle.create( 300, 100, colorCanvas.width, colorCanvas.height ) );
-
-        let imgData: ImageData = context.createImageData( size, size );
-
-        let data: Uint8ClampedArray = imgData.data;
-        const rbgaCount: number = data.length / 4;
-
-        for ( let i = 0; i < rbgaCount; i++ ) {
-            data[ i * 4 + 0 ] = 255;
-            data[ i * 4 + 1 ] = 0;
-            data[ i * 4 + 2 ] = 0;
-            data[ i * 4 + 3 ] = 255;
-        }
-
-        context.putImageData( imgData, size * rColum, size * rRow, 0, 0, size, size );
-        imgData = context.getImageData( size * cColum, size * cRow, size, size );
-        data = imgData.data;
-        let component = 0;
-        for ( let i = 0; i < imgData.width; i++ ) {
-            for ( let j = 0; j < imgData.height; j++ ) {
-                for ( let k = 0; k < 4; k++ ) {
-                    const idx: number = ( i * imgData.height + j ) * 4 + k;
-                    component = data[ idx ];
-                    if ( idx % 4 !== 3 ) {
-                        data[ idx ] = 255 - component;
-                    }
-                }
-            }
-        }
-        context.putImageData( imgData, size * cColum, size * cRow, 0, 0, size, size );
-        this.drawImage( colorCanvas,
-            Rectangle.create( 300, 100, colorCanvas.width, colorCanvas.height ) );
-    }
-
     public loadImage (): void {
         if ( this._img !== undefined ) {
             return;
@@ -987,87 +778,34 @@ class TestApplication extends Canvas2DApplication {
             console.log( " globalCompositeOperation : " + this.context2D.globalCompositeOperation );
         }
     }
+    /*******************************************5.1************************************************ */
+    public drawXYAxis() : void {
+        const w = this.canvas.width;
+        const h = this.canvas.height;
+        const centerX = w * 0.5;
+        const centerY = h * 0.5;
+        const magicN = Math.sqrt(2) * 0.5;
+        const scale = 20
+        if(this.context2D !== null){
+            this.context2D.save();
+            this.strokeLine(0,centerY,w,centerY);
+            this.context2D.lineWidth = 5;
+            this.strokeLine(centerX-magicN * scale,scale,centerX,0);
+            this.strokeLine(centerX+magicN * scale,scale,centerX,0);
+            this.strokeLine(w - scale,centerY-magicN * scale,w,centerY);
+            this.strokeLine(w - scale,centerY+magicN * scale,w,centerY);
+            this.context2D.lineWidth = 1;
+            this.strokeLine(centerX,0,centerX,h);
+            this.strokeCircle(centerX,centerY,3,"red");
+            this.context2D.restore();
+        }
+    }
 
 }
 
 //获取canvas元素
 const canvas: HTMLCanvasElement = document.getElementById( 'canvas' ) as HTMLCanvasElement;
 const app: TestApplication = new TestApplication( canvas );
+app.drawXYAxis();
 app.strokeGrid();
 
-const drawOptions = [
-    'drawRect','testMyRenderStateStack','printLineStates',
-    'fillLinearRect','fillRadialRect','fillPatternRect',
-    'printTextStates','testCanvas2DTextLayout','testMyTextLayout',
-    'loadAndDrawImage','drawColorCanvas','printShadowStates',
-    'testChangePartCanvasImageData','printAllRenderStates'
-];
-for(const [id,val] of drawOptions.entries()){
-    $('#drawOptions').append(`<option value=${id} name=${val}>${val}</option>`);
-}
-
-$('#drawOptions').on('change',function(){
-    const self = this as HTMLSelectElement
-    app.clear();
-    switch(parseInt(self.selectedOptions[0].value)){
-        case 0:
-            app . drawRect (10 , 10 , app . canvas . width - 20 , app . canvas . height - 20 ) ;
-            break;
-        case 1:
-            app . testMyRenderStateStack();
-            break;
-        case 2:
-            app . printLineStates();
-            break;
-        case 3:
-            app.fillLinearRect(10,10,100,100)
-            break
-        case 4:
-            app.fillRadialRect(10,10,100,200) ;
-            break;
-        case 5:
-            app.fillPatternRect ( 10 , 10 ,500 , 500 , "repeat");
-            break;
-        case 6:
-            app.printTextStates();
-            break;
-        case 7:
-            app.testCanvas2DTextLayout();
-            break;
-        case 8:
-            app.testMyTextLayout();
-            break;
-        case 9:
-            app.loadAndDrawImage("./data/test.jpg");
-            break;
-        case 10:
-            app.drawColorCanvas();
-            break;
-        case 11:
-            app.printShadowStates();
-            break;
-        case 12:
-            app.testChangePartCanvasImageData();
-            break;
-        case 13:
-            app.printAllRenderStates();
-            break
-        
-    }
-});
-
-
-//app . drawRect (10 , 10 , app . canvas . width - 20 , app . canvas . height - 20 ) ;
-//app . testMyRenderStateStack();
-//app . printLineStates();
-//app.fillLinearRect(10,10,100,100);
-//app.fillRadialRect(10,10,100,200) ;
-//app.fillPatternRect ( 10 , 10 ,500 , 500 , "repeat");
-//app.printTextStates();
-//app.testCanvas2DTextLayout();
-app.testMyTextLayout();
-//app.loadAndDrawImage("./data/test.jpg");
-//app.drawColorCanvas();
-//app.printShadowStates();
-//app.testChangePartCanvasImageData();
-//app.printAllRenderStates();
