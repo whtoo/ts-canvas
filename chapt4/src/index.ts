@@ -651,12 +651,43 @@ class TestApplication extends Canvas2DApplication {
     }
 
     public testMyTextLayout ( font: string = this.makeFontString( "10px", "normal", "normal", "normal", 'sans-serif' ) ): void {
-
+        /**
+         *               ↑
+         *              20
+         *               ↓
+         *      +------------------+
+         *      |                  |
+         * ←20→ |                  |
+         *      |                  |
+         *      |                  |
+         *      |                  |
+         *      |                  |
+         *      |                  |
+         *      +------------------|
+         * 
+         * 
+         * 
+         */
+        /**
+         * Margin-left
+         */
         const x = 20;
+        /**
+         * Margin-top
+         */
         const y = 20;
+        /**
+         * Text layouts display rect area
+         */
         const width: number = this.canvas.width - x * 2;
         const height: number = this.canvas.height - y * 2;
+        /**
+         * Text layouts display rect right boundry
+         */
         const right: number = x + width;
+              /**
+         * Text layouts display rect bottom boundry
+         */
         const bottom: number = y + height;
 
         let drawX: number = x;
