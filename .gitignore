@@ -4,3 +4,4 @@ temp
 coverage/
 lib/
 .vscode/
+*lock*
