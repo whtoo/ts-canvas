@@ -6,14 +6,14 @@
 
 ## 本地坐标系
 
-* [X] 绘制xy-Axis
-* [ ] 重构数学模块
-  * [ ] vec2
-  * [ ] vec3
-  * [ ] mat2
-  * [ ] mat3
-  * [ ] matrix operator
-  * [ ] gemotric function
+- [x] 绘制xy-Axis
+- [x] 重构数学模块
+  - [x] vec2
+  - [x] vec3
+  - [x] mat2
+  - [x] mat3
+  - [x] matrix operator
+  - [ ] gemotric function
 
 
 
