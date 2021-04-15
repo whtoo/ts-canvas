@@ -139,6 +139,9 @@ class TestApplication extends Canvas2DApplication {
             this.doTransform(0,false);
             this.doTransform(60,false);
             this.doTransform(20);
+            const r = this.distance(0,0, this.canvas.width*0.5, this.canvas.height*0.5);
+            this.strokeCircle(0,0,r);
+            
             this.drawCoordInfo('[' + this._mouseX + ',' + this._mouseY + ']',this._mouseX,this._mouseY);
         
         }
@@ -617,6 +620,11 @@ class TestApplication extends Canvas2DApplication {
             this.strokeCircle(centerX,centerY,3,"red");
             this.context2D.restore();
         }
+    }
+    protected distance( x1 : number, y1 : number,x2 : number,y2 : number ): number {
+        const diffX = x1 - x2;
+        const diffY = y1 - y2;
+        return Math.sqrt(diffX * diffX + diffY * diffY);
     }
     public doTransform(degree:number,rotateFirst=true) :void {
         if(this.context2D != null) {
