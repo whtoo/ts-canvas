@@ -136,12 +136,11 @@ class TestApplication extends Canvas2DApplication {
     }
 
     protected dispatchKeyPress(evt: CanvasKeyBoardEvent): void {
-        console.log(evt.key);
-        return
+        this._tank.onKeyPress(evt);
     }
 
     public update(elapsedMsec: number, intervalSec: number): void {
-        return
+        this._tank.update(intervalSec);
     }
 
     public render(): void {
@@ -158,7 +157,10 @@ class TestApplication extends Canvas2DApplication {
             this.drawXYAxis();
             this.draw4Quadrant();
             this.drawTank();
-            this.drawCoordInfo('[' + this._mouseX + ',' + this._mouseY + ']', this._mouseX, this._mouseY);
+            let msg = `'[' + ${this._mouseX} + ',' + ${this._mouseY} + ']'`;
+            msg = `坐标:[${(this._mouseX - this._tank.x).toFixed(2)},${(this._mouseY-this._tank.y).toFixed(2)}],角度:${Math2D.toDegree(this._tank.tankRotation).toFixed(2)}`;
+            this.drawCoordInfo(msg, this._mouseX, this._mouseY);
+            /** 5.3 */
 
         }
     }
@@ -813,7 +815,29 @@ class Tank {
         const radian = Math.atan2(diffY,diffX);
         this.tankRotation = radian;
     }
-
+    public linearSpeed = 100.0;
+    private _moveTowardTo(intervSec: number){ 
+        const diffX = this.targetX - this.x;
+        const diffY = this.targetY - this.y;
+        const currSpeed = this.linearSpeed * intervSec;
+        if((diffX * diffX + diffY * diffY) > currSpeed * currSpeed) {
+            this.x = this.x + Math.cos(this.tankRotation) * currSpeed;
+            this.y = this.y + Math.sin(this.tankRotation) * currSpeed;
+        }
+    }
+    public turretRotateSpeed = Math2D.toRadian(2);
+    public onKeyPress(evt: CanvasKeyBoardEvent) {
+        if(evt.key === 'r'){
+            this.turretRotation += this.turretRotateSpeed;
+        } else if(evt.key === 't'){
+            this.turretRotation = 0;
+        } else if(evt.key === 'e'){
+            this.turretRotation -= this.turretRotateSpeed;
+        }
+    }
+    public update(intervSec:number) {
+        this._moveTowardTo(intervSec);
+    }
     public draw(app: TestApplication) { 
         if(app.context2D === null) {return;}
         app.context2D.save();
