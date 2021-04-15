@@ -121,6 +121,7 @@ class TestApplication extends Canvas2DApplication {
     }
 
     protected dispatchKeyPress ( evt: CanvasKeyBoardEvent ): void {
+        console.log(evt.key);
         return
     }
 
@@ -132,13 +133,16 @@ class TestApplication extends Canvas2DApplication {
         if ( this.context2D !== null ) {
             let centX: number
             this.context2D.clearRect( 0, 0, this.canvas.width, this.canvas.height );
+            this.strokeGrid();
+            this.drawXYAxis();
+            this.drawCoordInfo('[' + this._mouseX + ',' + this._mouseY + ']',this._mouseX,this._mouseY);
         }
     }
     
     public clear() : void {
         this.context2D?.clearRect( 0, 0, this.canvas.width, this.canvas.height );
     }
-    /*******************************************4.1节代码************************************************ */
+    /*******************************************5.1节代码************************************************ */
     public drawRect ( x: number, y: number, w: number, h: number ): void {
         if ( this.context2D !== null ) {
             this.context2D.save();
@@ -161,136 +165,7 @@ class TestApplication extends Canvas2DApplication {
         }
     }
 
-    public testMyRenderStateStack (): void {
-        const stack: RenderStateStack = new RenderStateStack();
-        stack.printCurrentStateInfo();
-        stack.save();
-            stack.lineWidth = 10;
-            stack.fillStyle = 'black';
-            stack.printCurrentStateInfo();
-        stack.restore();
-        stack.printCurrentStateInfo();
-    }
 
-    public printLineStates (): void {
-        if ( this.context2D !== null ) {
-            console.log( " *********LineState********** " );
-            console.log( " lineWidth : " + this.context2D.lineWidth );
-            console.log( " lineCap : " + this.context2D.lineCap );
-            console.log( " lineJoin : " + this.context2D.lineJoin );
-            console.log( " miterLimit : " + this.context2D.miterLimit );
-        }
-    }
-
-    public drawRect1 (): void {
-        if ( this.context2D !== null ) {
-            this.context2D.save();
-            this.context2D.lineWidth = 10;
-            this.context2D.fillStyle = "rgba(255,0,0,0.5)"; 
-            this.context2D.strokeStyle = 'blue';
-            this.context2D.fillRect( this.context2D.canvas.width * 0.5, this.context2D.canvas.height * 0.5, this.context2D.canvas.width * 0.5, this.context2D.canvas.height * 0.5 );
-            this.context2D.strokeRect( this.context2D.canvas.width * 0.5, this.context2D.canvas.height * 0.5, this.context2D.canvas.width * 0.5, this.context2D.canvas.height * 0.5 );
-            this.context2D.restore();
-        }
-    }
-
-    public drawRect2 (): void {
-        if ( this.context2D !== null ) {
-            this.context2D.fillStyle = "rgba(0,255,0,0.5)";
-            this.context2D.strokeStyle = 'red';
-            this.context2D.beginPath();
-            this.context2D.rect( 0, 0, this.context2D.canvas.width * 0.5, this.context2D.canvas.height * 0.5 );
-            this.context2D.stroke();
-            this.context2D.fill();
-        }
-    }
-
-    public drawRect3 (): void {
-        if ( this.context2D !== null ) {
-            this.context2D.fillStyle = "rgba(0,0,255,0.5)";
-            this.context2D.strokeStyle = 'red';
-            this.context2D.beginPath();
-            this.context2D.moveTo( this.context2D.canvas.width * 0.5, 0 );
-            this.context2D.lineTo( this.context2D.canvas.width, 0 );
-            this.context2D.lineTo( this.context2D.canvas.width, this.context2D.canvas.height * 0.5 );
-            this.context2D.lineTo( this.context2D.canvas.width * 0.5, this.context2D.canvas.height * 0.5 );
-            //this . context2D . closePath ( ) ;
-            this.context2D.stroke();
-            this.context2D.fill();
-        }
-    }
-
-    private _updateLineDashOffset (): void {
-        this._lineDashOffset++;
-        if ( this._lineDashOffset > 10000 ) {
-            this._lineDashOffset = 0;
-        }
-    }
-
-    private _drawLineDashRect ( x: number, y: number, w: number, h: number ): void {
-        if ( this.context2D !== null ) {
-            this.context2D.save();
-            this.context2D.lineWidth = 2;
-            //this . context2D . strokeStyle = 'blue' ;
-            this.context2D.strokeStyle = 'rgb( 0 , 0 , 255 ) ';
-            //this . context2D . strokeStyle = 'rgb( 0% , 0% , 100% ) ' ;
-            //this . context2D . strokeStyle = 'rgb( 0% , 0% , 255 ) ' ;
-            //this . context2D . fillStyle = "rgba( 0 , 255 , 0 , 0.5 )" ; 
-            if ( this._linearGradient === undefined ) {
-                this._linearGradient = this.context2D.createLinearGradient( x, y, x + w, y );
-                //this . _linearGradient = this . context2D . createLinearGradient ( x , y, x  , y + h ) ;
-                //this . _linearGradient = this . context2D . createLinearGradient ( x , y, x + w , y + h ) ;
-                //this . _linearGradient = this . context2D . createLinearGradient ( x + w , y + h , x  , y) ;
-                this._linearGradient.addColorStop( 0.0, 'rgba( 255 , 0 , 0 , 1 ) ' );
-                this._linearGradient.addColorStop( 0.5, 'green' );
-                this._linearGradient.addColorStop( 0.8, '#0000FF' );
-                this._linearGradient.addColorStop( 1.0, 'black' );
-            }
-
-            if ( this._radialGradient === undefined ) {
-                const centX: number = x + w * 0.5;
-                const centY: number = y + h * 0.5;
-                let radius: number = Math.min( w, h );
-                radius *= 0.5;
-                this._radialGradient = this.context2D.createRadialGradient( centX, centY, radius * 0.2, centX, centY, radius );
-                //this . _linearGradient = this . context2D . createLinearGradient ( x , y, x  , y + h ) ;
-                //this . _linearGradient = this . context2D . createLinearGradient ( x , y, x + w , y + h ) ;
-                this._radialGradient.addColorStop( 0.0, 'rgba( 255 , 0 , 0 , 0.5 ) ' );
-                this._radialGradient.addColorStop( 0.5, 'green' );
-                this._radialGradient.addColorStop( 0.8, '#0000FF' );
-                this._radialGradient.addColorStop( 1.0, 'black' );
-            }
-
-            this.context2D.fillStyle = this._linearGradient;
-            //this . context2D . fillStyle = this . _radiusGradient ;
-            //this . context2D . lineDashOffset = 0 ;
-            this.context2D.setLineDash( [ 10, 5 ] );
-            this.context2D.lineDashOffset = - this._lineDashOffset;
-            //this . context2D . lineDashOffset = 5 ;
-            this.context2D.beginPath();
-            this.context2D.moveTo( x, y );
-            this.context2D.lineTo( x + w, y );
-            this.context2D.lineTo( x + w, y + h );
-            this.context2D.lineTo( x, y + h );
-            this.context2D.closePath();
-            this.context2D.fill();
-            this.context2D.stroke();
-            this.context2D.restore();
-        }
-    }
-
-    public timeCallback ( id: number, data: any ): void {
-        this._updateLineDashOffset();
-        this._drawLineDashRect( 10, 10, this.canvas.width - 20, this.canvas.height - 20 );
-    }
-
-    /*
-    public start ( ) : void {
-       this . addTimer ( (id : number , data : any) : void => {
-           this . timeCallback ( id , data ) ;
-       } , 0.05) ;
-       super . start ( ) ;
-    }*/
 
     public static Colors: string[] = [
         'aqua',    //浅绿色
@@ -725,58 +600,8 @@ class TestApplication extends Canvas2DApplication {
             console.log( imgData.data );
         }
     }
-
-    /*******************************************4.4节代码************************************************ */
-
-
-    public printShadowStates (): void {
-        if ( this.context2D !== null ) {
-            console.log( "*********ShadowState**********" );
-            console.log( " shadowBlur : " + this.context2D.shadowBlur );
-            console.log( " shadowColor : " + this.context2D.shadowColor );
-            console.log( " shadowOffsetX : " + this.context2D.shadowOffsetX );
-            console.log( " shadowOffsetY : " + this.context2D.shadowOffsetY );
-        }
-    }
-
-    public setShadowState ( shadowBlur = 5, shadowColor = "rgba( 127 , 127 , 127 , 0.5 )", shadowOffsetX = 10, shadowOffsetY = 10 ): void {
-        if ( this.context2D !== null ) {
-            this.context2D.shadowBlur = shadowBlur;
-            this.context2D.shadowColor = shadowColor;
-            this.context2D.shadowOffsetX = shadowOffsetX;
-            this.context2D.shadowOffsetY = shadowOffsetY;
-        }
-    }
-
-    /*******************************************全部渲染状态输出代码************************************************ */
-    public printAllRenderStates (): void {
-        if ( this.context2D !== null ) {
-            console.log( " *********LineState********** " );
-            console.log( " lineWidth : " + this.context2D.lineWidth );
-            console.log( " lineCap : " + this.context2D.lineCap );
-            console.log( " lineJoin : " + this.context2D.lineJoin );
-            console.log( " miterLimit : " + this.context2D.miterLimit );
-
-            console.log( " *********LineDashState********** " );
-            console.log( " lineDashOffset : " + this.context2D.lineDashOffset );
-
-            console.log( " *********ShadowState********** " );
-            console.log( " shadowBlur : " + this.context2D.shadowBlur );
-            console.log( " shadowColor : " + this.context2D.shadowColor );
-            console.log( " shadowOffsetX : " + this.context2D.shadowOffsetX );
-            console.log( " shadowOffsetY : " + this.context2D.shadowOffsetY );
-
-            console.log( "*********TextState**********" );
-            console.log( " font : " + this.context2D.font );
-            console.log( " textAlign : " + this.context2D.textAlign );
-            console.log( " textBaseline : " + this.context2D.textBaseline );
-
-            console.log( "*********RenderState**********" );
-            console.log( " strokeStyle : " + this.context2D.strokeStyle );
-            console.log( " fillStyle : " + this.context2D.fillStyle );
-            console.log( " globalAlpha : " + this.context2D.globalAlpha );
-            console.log( " globalCompositeOperation : " + this.context2D.globalCompositeOperation );
-        }
+    public drawCoordInfo(info: string,x:number,y:number) : void {
+        this.fillText( info,x,y,'black','center','bottom' );
     }
     /*******************************************5.1************************************************ */
     public drawXYAxis() : void {
@@ -806,6 +631,4 @@ class TestApplication extends Canvas2DApplication {
 //获取canvas元素
 const canvas: HTMLCanvasElement = document.getElementById( 'canvas' ) as HTMLCanvasElement;
 const app: TestApplication = new TestApplication( canvas );
-app.drawXYAxis();
-app.strokeGrid();
-
+app.start();

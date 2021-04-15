@@ -1,4 +1,4 @@
-import { vec2 } from './math2d'
+import * as math2d from './math2d'
 export enum EInputEventType {
     MOUSEEVENT,
     MOUSEDOWN,
@@ -47,12 +47,12 @@ export class CanvasMouseEvent extends CanvasInputEvent {
     public localPosition;
     public hasLocalPosition;
 
-    public constructor(type: EInputEventType,canvasPos:vec2,button: number,altKey = false,ctrlKey = false,shiftKey = false) {
+    public constructor(type: EInputEventType,canvasPos:math2d.vec2,button: number,altKey = false,ctrlKey = false,shiftKey = false) {
         super(type,altKey,ctrlKey,shiftKey)
         this.canvasPosition = canvasPos;
         this.button = button;
         this.hasLocalPosition = false;
-        this.localPosition = vec2.create();
+        this.localPosition = math2d.vec2.create();
     }
 }
 
@@ -207,7 +207,7 @@ export class Application implements EventListenerObject {
         return ;
     }
 
-    private _viewportToCanvasCoordinate ( evt : MouseEvent ) : vec2 {
+    private _viewportToCanvasCoordinate ( evt : MouseEvent ) : math2d.vec2 {
         if ( this . canvas ) {
             const rect : ClientRect = this . canvas . getBoundingClientRect ( ) ;
             if ( evt . type === "mousedown" ) {
@@ -244,7 +244,7 @@ export class Application implements EventListenerObject {
                 const x : number  = evt . clientX - rect . left - borderLeftWidth - paddingLeft ;
                 const y : number  = evt . clientY - rect . top - borderTopWidth - paddingTop ;
 
-                const pos : vec2 = vec2 . create ( x , y ) ;    
+                const pos : math2d.vec2 = math2d.vec2 . create ( x , y ) ;    
             
                 if ( evt . type === "mousedown" ) {
                     console . log ( " borderLeftWidth : " + borderLeftWidth + " borderTopWidth : " + borderTopWidth ) ;
@@ -265,7 +265,7 @@ export class Application implements EventListenerObject {
     
     private _toCanvasMouseEvent ( evt : Event , type : EInputEventType ) : CanvasMouseEvent {
         const event : MouseEvent = evt as MouseEvent ;
-        const mousePosition : vec2 = this . _viewportToCanvasCoordinate ( event ) ;
+        const mousePosition : math2d.vec2 = this . _viewportToCanvasCoordinate ( event ) ;
         const canvasMouseEvent : CanvasMouseEvent = new CanvasMouseEvent ( type , mousePosition , event . button , event . altKey , event . ctrlKey , event . shiftKey ) ;
         return canvasMouseEvent ;
     }
