@@ -22,3 +22,5 @@
   - [x] matrix operator
   - [ ] gemotric function
 - [x] 修正测试入口
+- [x] 增加本地坐标系的变换demo
+- [x] 完成本地坐标系到世界坐标系demo
