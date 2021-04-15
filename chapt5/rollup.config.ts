@@ -56,6 +56,7 @@ const rollupConfig : RollupOptions = {
         moduleDirectory: 'node_modules',
       },
     }),
+    
     rollupTypescript(),
     babel({
       runtimeHelpers: true,

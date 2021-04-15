@@ -135,7 +135,12 @@ class TestApplication extends Canvas2DApplication {
             this.context2D.clearRect( 0, 0, this.canvas.width, this.canvas.height );
             this.strokeGrid();
             this.drawXYAxis();
+            /** Drawing codes */
+            this.doTransform(0,false);
+            this.doTransform(60,false);
+            this.doTransform(20);
             this.drawCoordInfo('[' + this._mouseX + ',' + this._mouseY + ']',this._mouseX,this._mouseY);
+        
         }
     }
     
@@ -343,22 +348,7 @@ class TestApplication extends Canvas2DApplication {
         }
     }
 
-    public strokeGrid ( color = 'grey', interval = 10 ): void {
-        if ( this.context2D !== null ) {
-            this.context2D.save();
-            this.context2D.strokeStyle = color;
-            this.context2D.lineWidth = 0.5;
-            for ( let i: number = interval + 0.5; i < this.canvas.width; i += interval ) {
-                this.strokeLine( i, 0, i, this.canvas.height );
-            }
-            for ( let i: number = interval + 0.5; i < this.canvas.height; i += interval ) {
-                this.strokeLine( 0, i, this.canvas.width, i );
-            }
-            this.context2D.restore();
-            this.fillCircle( 0, 0, 5, 'green' );
-            this.strokeCoord( 0, 0, this.canvas.width, this.canvas.height );
-        }
-    }
+   
     
     public fillText ( text: string, x: number, y: number, color = 'white', align: TextAlign = 'left', baseline: TextBaseline = 'top', font: FontType = '10px sans-serif' ): void {
         if ( this.context2D !== null ) {
@@ -578,32 +568,35 @@ class TestApplication extends Canvas2DApplication {
             Rectangle.create( 100, 100, colorCanvas.width, colorCanvas.height ) );
     }
 
-    public loadImage (): void {
-        if ( this._img !== undefined ) {
-            return;
-        }
-
-        const img: HTMLImageElement = document.createElement( 'img' ) as HTMLImageElement;
-        img.src = './data/test.jpg';
-        img.onload = ( ev: Event ): void => {
-            this._img = img;
-        }
-    }
-
-    public isImgLoaded (): boolean {
-        return this._img !== undefined;
-    }
-
     public printPixelsColor ( x: number, y: number, w: number, h: number ): void {
         if ( this.context2D !== null ) {
             const imgData: ImageData = this.context2D.getImageData( x, y, w, h );
             console.log( imgData.data );
         }
     }
+
+    /*******************************************5.1************************************************ */
     public drawCoordInfo(info: string,x:number,y:number) : void {
         this.fillText( info,x,y,'black','center','bottom' );
     }
-    /*******************************************5.1************************************************ */
+
+    public strokeGrid ( color = 'grey', interval = 10 ): void {
+        if ( this.context2D !== null ) {
+            this.context2D.save();
+            this.context2D.strokeStyle = color;
+            this.context2D.lineWidth = 0.5;
+            for ( let i: number = interval + 0.5; i < this.canvas.width; i += interval ) {
+                this.strokeLine( i, 0, i, this.canvas.height );
+            }
+            for ( let i: number = interval + 0.5; i < this.canvas.height; i += interval ) {
+                this.strokeLine( 0, i, this.canvas.width, i );
+            }
+            this.context2D.restore();
+            this.fillCircle( 0, 0, 5, 'green' );
+            this.strokeCoord( 0, 0, this.canvas.width, this.canvas.height );
+        }
+    }
+
     public drawXYAxis() : void {
         const w = this.canvas.width;
         const h = this.canvas.height;
@@ -625,7 +618,40 @@ class TestApplication extends Canvas2DApplication {
             this.context2D.restore();
         }
     }
-
+    public doTransform(degree:number,rotateFirst=true) :void {
+        if(this.context2D != null) {
+            const centerX = Math.floor(this.canvas.width * 0.5);
+            const centerY = Math.floor(this.canvas.height * 0.5);
+            
+            const radians = Math2D.toRadian(degree);
+    
+            this.context2D.save();
+                if(rotateFirst) {
+                    this.context2D.rotate(radians);
+                    this.context2D.translate(centerX, centerY);
+                
+                }else{
+                    this.context2D.translate(centerX,centerY);
+                    this.context2D.rotate(radians);
+                }
+                this.fillRectWithTitle(0,0,100,60,"+"+degree + "度旋转");
+            this.context2D.restore();
+        }
+       
+    }
+    // public doTransform():void {
+    //     if (this.context2D !== null) {
+    //         const width = 100;
+    //         const height = 60;
+    //         // 计算出画布中心
+    //         const x = this.canvas.width * 0.5;
+    //         const y = this.canvas.height * 0.5;
+    //         this.context2D.save();
+    //             this.context2D.translate(x,y);
+    //             this.fillRectWithTitle(0,0,width,height,'0度旋转');
+    //         this.context2D.restore();
+    //     }
+    // }
 }
 
 //获取canvas元素
