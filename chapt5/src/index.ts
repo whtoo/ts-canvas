@@ -877,6 +877,8 @@ class Tank {
                 app.fillCircle(0,0,10,'green');
                 app.context2D.restore();            
             app.context2D.restore();
+
+          
             if(this.showCoord) {
                 app.context2D.save();
                 app.context2D.lineWidth = 1;
@@ -885,6 +887,12 @@ class Tank {
                 app.context2D.restore();
             }
         app.context2D.restore();
+        //绘制引导线
+        app.context2D.save();
+        app.strokeLine(this.x,this.y,app.canvas.width*0.5,app.canvas.height*0.5);
+        app.strokeLine(this.x,this.y,this.targetX,this.targetY);
+        app.context2D.restore();
+
     }
 }
 //获取canvas元素
