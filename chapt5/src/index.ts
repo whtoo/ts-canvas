@@ -812,7 +812,8 @@ class Tank {
     private _lookAt() {
         const diffX = this.targetX - this.x;
         const diffY = this.targetY - this.y;
-        const radian = Math.atan2(diffY,diffX);
+        let radian = Math.atan2(diffY,diffX);
+        radian = this.initYAxis? radian - Math.PI /2: radian;
         this.tankRotation = radian;
     }
     public linearSpeed = 100.0;
@@ -821,8 +822,9 @@ class Tank {
         const diffY = this.targetY - this.y;
         const currSpeed = this.linearSpeed * intervSec;
         if((diffX * diffX + diffY * diffY) > currSpeed * currSpeed) {
-            this.x = this.x + Math.cos(this.tankRotation) * currSpeed;
-            this.y = this.y + Math.sin(this.tankRotation) * currSpeed;
+            const rot = (this.initYAxis)?this.tankRotation + Math.PI/2 : this.tankRotation;
+            this.x = this.x + Math.cos(rot) * currSpeed;
+            this.y = this.y + Math.sin(rot) * currSpeed;
         }
     }
     public turretRotateSpeed = Math2D.toRadian(2);
@@ -843,7 +845,7 @@ class Tank {
         app.context2D.save();
         // trs: translate -> scale;
         app.context2D.translate(this.x,this.y);
-        app.context2D.rotate(this.tankRotation);
+        app.context2D.rotate(this.tankRotation + Math.PI / 2);
         app.context2D.scale(this.scaleX,this.scaleY);
             app.context2D.save();
                 // 底座
