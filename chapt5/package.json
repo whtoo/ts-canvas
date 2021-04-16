@@ -11,7 +11,8 @@
     "test": "jest --coverage --verbose -u",
     "changelog": "gulp changelog",
     "build:dev": "npm run build && lite-server --baseDir=\"lib\"",
-    "server": "lite-server --baseDir=\"lib\""
+    "server": "lite-server --baseDir=\"lib\"",
+    "analysis": "arkit src/ -o arkit.svg"
   },
   "sideEffects": "false",
   "author": "",
@@ -26,6 +27,7 @@
     "@types/node": "^14.11.1",
     "@typescript-eslint/eslint-plugin": "^4.1.1",
     "@typescript-eslint/parser": "^4.1.1",
+    "arkit": "^1.6.4",
     "browser-sync": "^2.26.12",
     "chalk": "^4.1.0",
     "conventional-changelog-cli": "^2.1.0",
