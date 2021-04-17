@@ -2,7 +2,7 @@
 import { Canvas2DApplication, Application, TimerCallback, CanvasKeyBoardEvent, CanvasMouseEvent } from "./application";
 import { Math2D, mat2d, vec3, MatrixStack, Size, vec2, Rectangle, Inset } from "./math2d";
 import { EImageFillType, ELayout } from './drawtypes'
-import $ from 'jquery';
+import { threadId } from "node:worker_threads";
 
 /**
  * Don't export anything on top class
@@ -92,10 +92,7 @@ class TestApplication extends Canvas2DApplication {
     private _linearGradient !: CanvasGradient;
     private _radialGradient !: CanvasGradient;
     private _pattern: CanvasPattern | null = null;
-    /* 5.1 */
-    private _tank: Tank;
-    private _img !: HTMLImageElement;
-
+  
     private _mouseX = 0;
     private _mouseY = 0;
 
@@ -106,29 +103,17 @@ class TestApplication extends Canvas2DApplication {
         super(canvas);
 
         this.isSupportMouseMove = true;
-        /** 5.2 */
-        this._tank = new Tank();
-        this._tank.x = canvas.width * 0.5;
-        this._tank.y = canvas.height * 0.5;
-        this._tank.scaleX = 2.0;
-        this._tank.scaleY = 2.0;
-
-
-        /** 5.2 */
-        // 添加计时器，以每秒30帧的速度运行
-        // 使用bind方法绑定回调函数
-        // this . addTimer ( this . timeCallback . bind ( this ) , 0.033 ) ;
-        // this . loadImage ( ) ;
+     
     }
-    /** 5.2 */
-    public drawTank() {
-        this._tank.draw(this);
-    }
+  
     protected dispatchMouseMove(evt: CanvasMouseEvent): void {
         this._mouseX = evt.canvasPosition.x;
         this._mouseY = evt.canvasPosition.y;
-        /** 5.2 */
-        this._tank.onMouseMove(evt);
+        
+        this._hitted = Math2D.projectPointOnLineSegment( 
+            vec2.create(evt.canvasPosition.x,evt.canvasPosition.y),
+            this.lineStart,this.lineEnd,this.closePt
+        );
     }
 
     protected dispatchMouseUp(evt: CanvasMouseEvent): void {
@@ -136,11 +121,11 @@ class TestApplication extends Canvas2DApplication {
     }
 
     protected dispatchKeyPress(evt: CanvasKeyBoardEvent): void {
-        this._tank.onKeyPress(evt);
+        return
     }
 
     public update(elapsedMsec: number, intervalSec: number): void {
-        this._tank.update(intervalSec);
+        return
     }
 
     public render(): void {
@@ -148,25 +133,129 @@ class TestApplication extends Canvas2DApplication {
             let centX: number
             this.context2D.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.strokeGrid();
-            
-            /** 5.1 Drawing codes */
-            // this.drawXYAxis();
-            // this.testFillLocalRectWithTitle();
-            // this.doLocalTransform();
-            /** 5.2 Drawing codes */
-            this.drawXYAxis();
-            this.draw4Quadrant();
-            this.drawTank();
-            let msg = `'[' + ${this._mouseX} + ',' + ${this._mouseY} + ']'`;
-            msg = `坐标:[${(this._mouseX - this._tank.x).toFixed(2)},${(this._mouseY-this._tank.y).toFixed(2)}],角度:${Math2D.toDegree(this._tank.tankRotation).toFixed(2)}`;
+            /** 6.2 Drawing codes */
+        
+            this . drawMouseLineProjection ( ) ;
+            const msg = `[ ${this._mouseX} , ${this._mouseY} ]`;
             this.drawCoordInfo(msg, this._mouseX, this._mouseY);
-            /** 5.3 */
 
         }
     }
 
     public clear(): void {
         this.context2D?.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+    /******************************** 6.2 */
+    /**
+     * 
+     * @param len 要绘制的向量长度，这是一个浮点数etc: 100.50
+     * @param arrowLen 要绘制向量的箭头长度,整数 etc: 10
+     * @param beginText 向量头部标注
+     * @param endText 向量尾部标注
+     * @param isLineDash 是否虚线
+     * @param showInfo 是否显示向量长度
+     * @param alpha 是否以半透明方式显示向量
+     */
+    public  drawVec(len:number,arrowLen=10,beginText="",endText="",lineWidth=1,isLineDash=false,showInfo=false,alpha=false): void {
+        if(this.context2D === null) return
+        // 负数处理
+        if (len < 0) arrowLen = -arrowLen
+        this.context2D.save();
+            this.context2D.lineWidth = lineWidth;
+            if(isLineDash){
+                this.context2D.setLineDash([2,2]);
+            }
+            if(lineWidth > 1) {
+                this.fillCircle(0,0,5);
+            } else {
+                this.fillCircle(0,0,3);
+            }
+            this.context2D.save();
+                if(alpha === true) {
+                    this.context2D.strokeStyle = 'rgba(0,0,0,0.3)';
+                }
+                this.strokeLine(0,0,len,0);
+                this.context2D.save();
+                    this.strokeLine(len,0,len-arrowLen,arrowLen);
+                this.context2D.restore();
+                //DONE: 绘制箭头的下半部分
+                this.context2D.save();
+                    this.strokeLine(len,0,len-arrowLen,-arrowLen);
+                this.context2D.restore();
+
+            this.context2D.restore();
+
+            const font: FontType = "15px sans-serif";
+            if(beginText != undefined && beginText.length != 0){
+                if (len > 0) {
+                    this.fillText(beginText,0,0,'black','right','bottom',font);
+                } else{
+                    this.fillText(beginText,0,0,'black','left','bottom',font);
+                }
+            }
+            len = parseFloat(len.toFixed(2));
+            if (endText != undefined && endText.length != 0 ){
+                if (len > 0){
+                    this.fillText(endText,len,0,'black','left','bottom',font);
+                } else{
+                    this.fillText(endText,len,0,'black','right','bottom',font);
+                }
+            }
+            if(showInfo === true) {
+                this.fillText(Math.abs(len).toString(),len *  0.5,0,'black','center','bottom',font);
+            }
+
+        this.context2D.restore();
+    }
+    public drawVecFromLine(start: vec2, end: vec2, arrowLen = 10,beginText="",endText="",lineWidth=1,isLineDash=false,showInfo=false,alpha=false) : number {
+        const angle = vec2.getOrientation(start,end,true);
+        if (this.context2D !== null){
+            const diff = vec2.difference(end,start);
+            const len = diff.length;
+            this.context2D.save();
+                this.context2D.translate(start.x,start.y);
+                this.context2D.rotate(angle);
+                this.drawVec(len,arrowLen,beginText,endText,lineWidth,isLineDash,showInfo,alpha);
+            this.context2D.restore();
+        }
+        return angle;
+    }
+    /*******************************************6.2代码************************************************ */    
+    public lineStart : vec2 = vec2 . create ( 150 , 150 ) ;
+    public lineEnd : vec2 = vec2 . create ( 400 , 300 ) ; 
+    public closePt : vec2 = vec2 . create ( ) ; 
+    private _hitted = false ;
+
+    public drawMouseLineProjection ( ) : void {
+        if (this.context2D != null) {
+            if (this._hitted === false){
+                this.drawVecFromLine(this.lineStart,this.lineEnd,10,this.lineStart.toString(),this.lineEnd.toString(),1,false,true);
+            } else {
+                let angle = 0;
+                const mousePt = vec2.create(this._mouseX,this._mouseY);
+
+                this.context2D.save();
+                    angle = this.drawVecFromLine(this.lineStart,this.lineEnd,10,this.lineStart.toString(),this.lineEnd.toString(),3,false,true);
+                    this.fillCircle(this.closePt.x,this.closePt.y,5);
+                    this.drawVecFromLine(this.lineStart,mousePt,10,'','',1,true,true,false);
+                    this.drawVecFromLine(mousePt,this.closePt,10,'','',1,true,true,false);
+                this.context2D.restore();
+
+                this.context2D.save();
+                    this.context2D.translate(this.closePt.x,this.closePt.y);
+                    this.context2D.rotate(angle);
+                    this.drawCoordInfo(`[${(this.closePt.x).toFixed(2)},${(this.closePt.y).toFixed(2)}]`,0,0);
+                this.context2D.restore();
+
+                angle = vec2.getAngle(vec2.difference(this.lineEnd,this.lineStart),vec2.difference(mousePt,this.lineStart),false);
+                this.drawCoordInfo(
+                    angle.toFixed(2),
+                    this.lineStart.x + 10,
+                    this.lineStart.y + 10
+                );
+
+            }
+        }
     }
     /*******************************************5.1节代码************************************************ */
     public drawRect(x: number, y: number, w: number, h: number): void {
@@ -631,10 +720,17 @@ class TestApplication extends Canvas2DApplication {
             this.context2D.save();
             this.strokeLine(0, centerY, w, centerY);
             this.context2D.lineWidth = 5;
+
+            this.context2D.save();
+            this.context2D.translate(0, centerY*2);
+            this.context2D.scale(1,-1);
             this.strokeLine(centerX - magicN * scale, scale, centerX, 0);
             this.strokeLine(centerX + magicN * scale, scale, centerX, 0);
+            this.context2D.restore();
+
             this.strokeLine(w - scale, centerY - magicN * scale, w, centerY);
             this.strokeLine(w - scale, centerY + magicN * scale, w, centerY);
+
             this.context2D.lineWidth = 1;
             this.strokeLine(centerX, 0, centerX, h);
             this.strokeCircle(centerX, centerY, 3, "red");
@@ -646,129 +742,6 @@ class TestApplication extends Canvas2DApplication {
         const diffX = x1 - x2;
         const diffY = y1 - y2;
         return Math.sqrt(diffX * diffX + diffY * diffY);
-    }
-    /** 5.1 */
-    public doTransform(degree: number, rotateFirst = true): void {
-        if (this.context2D != null) {
-            const centerX = Math.floor(this.canvas.width * 0.5);
-            const centerY = Math.floor(this.canvas.height * 0.5);
-
-            const radians = Math2D.toRadian(degree);
-
-            this.context2D.save();
-            if (rotateFirst) {
-                this.context2D.rotate(radians);
-                this.context2D.translate(centerX, centerY);
-
-            } else {
-                this.context2D.translate(centerX, centerY);
-                this.context2D.rotate(radians);
-            }
-            this.fillRectWithTitle(0, 0, 100, 60, "+" + degree + "度旋转");
-            this.context2D.restore();
-        }
-
-    }
-    public testFillLocalRectWithTitle() {
-        if(this.context2D !== null) {
-            this.rotateTranslate(0,ELayout.LEFT_TOP);
-            this.rotateTranslate(10,ELayout.LEFT_MIDDLE);
-            this.rotateTranslate(20,ELayout.LEFT_BOTTOM);
-            this.rotateTranslate(30,ELayout.CENTER_TOP);
-            this.rotateTranslate(40,ELayout.CENTER_MIDDLE);
-            this.rotateTranslate(-10,ELayout.CENTER_BOTTOM);
-            this.rotateTranslate(-20,ELayout.RIGHT_TOP);
-            this.rotateTranslate(-30,ELayout.RIGHT_MIDDLE);
-            this.rotateTranslate(-40,ELayout.RIGHT_BOTTOM);
-            const radius = this.distance(0,0,this.canvas.width * 0.5,this.canvas.height * 0.5);
-            this.strokeCircle(0,0,radius,'black');
-        }
-    }
-    public rotateTranslate(degree: number,layout=ELayout.LEFT_TOP,width=40,height=20) {
-        if (this.context2D == null) return;
-        const radians = Math2D.toRadian( degree);
-        this.context2D.save();
-        this.context2D.rotate(radians);
-        this.context2D.translate(this.canvas.width * 0.5,this.canvas.height * 0.5);
-        this.fillLocalRectWithTitle(width,height,'',layout);
-        
-        this.context2D.restore();
-    }
-
-    /** 5.1 */
-    public fillLocalRectWithTitle(width: number, height: number,
-        title: string, refrencePt = ELayout.CENTER_MIDDLE, layout =
-            ELayout.CENTER_MIDDLE, color = 'grey', showCoord = true): void {
-        if (this.context2D !== null) {
-            let x = 0;
-            let y = 0;
-            switch (refrencePt) {
-                case ELayout.LEFT_TOP:
-                    x = 0;
-                    y = 0;
-                    break;
-                case ELayout.LEFT_MIDDLE:
-                    x = 0;
-                    y = -height * 0.5;
-                    break;
-                case ELayout.LEFT_BOTTOM:
-                    x = 0;
-                    y = -height;
-                    break;
-                case ELayout.RIGHT_TOP:
-                    x = -width;
-                    y = 0;
-                    break;
-                case ELayout.RIGHT_MIDDLE:
-                    x = -width;
-                    y = -height * 0.5;
-                    break;
-                case ELayout.RIGHT_BOTTOM:
-                    x = -width;
-                    y = -height;
-                    break;
-                case ELayout.CENTER_TOP:
-                    x = -width * 0.5;
-                    y = 0;
-                    break;
-                case ELayout.CENTER_MIDDLE:
-                    x = -width * 0.5;
-                    y = -height * 0.5;
-                    break;
-                case ELayout.CENTER_BOTTOM:
-                    x = -width * 0.5;
-                    y = -height;
-                    break;
-
-            }
-
-            this.fillRectWithTitle(x,y,width,height,title,layout,color);
-            if(showCoord){
-
-                this.fillCircle(0,0,3,'black');
-            }
-            
-        }
-    }
-    /** 5.1 */
-    public doLocalTransform() {
-        if(this.context2D !== null) {
-            const width = 100;
-            const height = 100;
-            const coordWidth = width * 1.2;
-            const coordHeight = height * 1.2;
-            const radius = 3;
-            this.context2D.save();
-            this.strokeCoord(0,0,coordWidth,coordHeight);
-            this.fillCircle(0,0,radius,'red');
-            this.fillLocalRectWithTitle(width,height,'1、初始状态',ELayout.LEFT_TOP);
-
-            this.context2D.translate(this.canvas.width * 0.5,10);
-            this.strokeCoord(0,0,coordWidth,coordHeight);
-            this.fillCircle(0,0,radius,'red');
-            this.fillLocalRectWithTitle(width,height,'2、平移状态',ELayout.LEFT_TOP);
-            this.context2D.restore();
-        }
     }
 
     /** 5.2 */
@@ -784,119 +757,8 @@ class TestApplication extends Canvas2DApplication {
         }
     }
 
-   
 }
- /** 5.2 */
-class Tank {
-    public width = 80;
-    public height = 50;        
-    public x = 100;
-    public y = 100;
-    public scaleX = 1.0;
-    public scaleY = 1.0;
-    public tankRotation = 0;
-    public turretRotation = 0;
-    public initYAxis = true;
-    public showLine = false;
-    public showCoord = false;
-    public gunLength = Math.max(this.width,this.height);
-    public gunMuzzleRadius = 5
-    public targetX = 0;
-    public targetY = 0;
 
-    public onMouseMove(evt: CanvasMouseEvent) {
-        this.targetX = evt.canvasPosition.x;
-        this.targetY = evt.canvasPosition.y;
-        this._lookAt();
-    }
-    private _lookAt() {
-        const diffX = this.targetX - this.x;
-        const diffY = this.targetY - this.y;
-        let radian = Math.atan2(diffY,diffX);
-        radian = this.initYAxis? radian - Math.PI /2: radian;
-        this.tankRotation = radian;
-    }
-    public linearSpeed = 100.0;
-    private _moveTowardTo(intervSec: number){ 
-        const diffX = this.targetX - this.x;
-        const diffY = this.targetY - this.y;
-        const currSpeed = this.linearSpeed * intervSec;
-        if((diffX * diffX + diffY * diffY) > currSpeed * currSpeed) {
-            const rot = (this.initYAxis)?this.tankRotation + Math.PI/2 : this.tankRotation;
-            this.x = this.x + Math.cos(rot) * currSpeed;
-            this.y = this.y + Math.sin(rot) * currSpeed;
-        }
-    }
-    public turretRotateSpeed = Math2D.toRadian(2);
-    public onKeyPress(evt: CanvasKeyBoardEvent) {
-        if(evt.key === 'r'){
-            this.turretRotation += this.turretRotateSpeed;
-        } else if(evt.key === 't'){
-            this.turretRotation = 0;
-        } else if(evt.key === 'e'){
-            this.turretRotation -= this.turretRotateSpeed;
-        }
-    }
-    public update(intervSec:number) {
-        this._moveTowardTo(intervSec);
-    }
-    public draw(app: TestApplication) { 
-        if(app.context2D === null) {return;}
-        app.context2D.save();
-        // trs: translate -> scale;
-        app.context2D.translate(this.x,this.y);
-        app.context2D.rotate(this.tankRotation + Math.PI / 2);
-        app.context2D.scale(this.scaleX,this.scaleY);
-            app.context2D.save();
-                // 底座
-                app.context2D.save();
-                app.context2D.fillStyle = 'grey';
-                app.context2D.beginPath();
-                app.context2D.rect(-this.width*0.5,-this.height*0.5,this.width,this.height);
-                app.context2D.fill();
-                app.context2D.restore();
-                //炮管
-                app.context2D.save();
-                app.context2D.rotate(this.turretRotation);
-                app.context2D.fillStyle = 'red';
-                app.context2D.beginPath();
-                app.context2D.ellipse(0,0,15,10,0,0,Math.PI*2);
-                app.context2D.fill();
-                app.context2D.strokeStyle = 'blue';
-                app.context2D.lineWidth = 5;
-                app.context2D.lineCap = 'round';
-                app.context2D.beginPath();
-                app.context2D.moveTo(0,0);
-                app.context2D.lineTo(this.gunLength,0);
-                app.context2D.stroke();
-                app.context2D.translate(this.gunLength,0);
-                app.context2D.translate(this.gunMuzzleRadius,0);
-                app.fillCircle(0,0,5,'black');
-                app.context2D.restore();
-                //炮口
-                app.context2D.save();
-                app.context2D.translate(this.width*0.5,0);
-                app.fillCircle(0,0,10,'green');
-                app.context2D.restore();            
-            app.context2D.restore();
-
-          
-            if(this.showCoord) {
-                app.context2D.save();
-                app.context2D.lineWidth = 1;
-                app.context2D.lineCap= 'round';
-                app.strokeCoord(0,0,this.width*1.2,this.height*1.2);
-                app.context2D.restore();
-            }
-        app.context2D.restore();
-        //绘制引导线
-        app.context2D.save();
-        app.strokeLine(this.x,this.y,app.canvas.width*0.5,app.canvas.height*0.5);
-        app.strokeLine(this.x,this.y,this.targetX,this.targetY);
-        app.context2D.restore();
-
-    }
-}
 //获取canvas元素
 const canvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
 const app: TestApplication = new TestApplication(canvas);
